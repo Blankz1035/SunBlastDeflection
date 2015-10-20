@@ -1,0 +1,16 @@
+# SunBlastDeflection
+Short 
+Html5, Javascript, CSS Graphics Programming Project
+
+
+
+Simple Game:
+
+** Move the Deflecter left or right with arrow keys
+
+** Defend against Sun Blasts from the almighty star
+** to keep planets health good!
+
+** Master the deflector as it decreases in size 
+** and blasts get more frequent.
+
