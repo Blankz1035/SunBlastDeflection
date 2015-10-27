@@ -1,0 +1,12 @@
+#canvas-container {
+  margin-left: auto;
+  margin-right: auto;
+  background-image: url(background.png);
+  height: 490px;
+  width: 793px;
+  border: 1px solid black ;
+}
+
+canvas {
+   display: inline;
+}

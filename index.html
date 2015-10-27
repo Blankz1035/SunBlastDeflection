@@ -1,14 +1,105 @@
 <!DOCTYPE html>
 <html>
   <head>
-    ...
+    <h1 style = " text-align: center"><u>Sun Blast Deflector</u></h1> 
+    
     <style type="text/css"></style>
+    <link rel="stylesheet" type="text/css"        href="sunblastdeflector.css">
   </head>
+  </br>
   <body>
-    <canvas id="gamecanvas"></canvas>
+    <div id = "canvas-container">
+    <canvas id="gamecanvas" width = "793" height = "490"></canvas></div>
     
     <script type="text/javascript">
-      ...
+        var canvas = document.getElementById("gamecanvas");
+      // Get a 2D context for the canvas.
+        var ctx = canvas.getContext("2d");
+        
+      var blast = 
+        {
+            x: 80,
+            y: 10,
+            r: 10,
+            vx: 2,
+            vy: 3,
+        }
+      
+      var player =
+          {
+            x: 330,
+            y: canvas.width/2+30, 
+            width: 100,
+            height: 10,
+            vx: 10,         
+          }     
+      
+      
+      function init(){
+        draw();
+        moveBlast();
+        
+        window.requestAnimationFrame(init);
+      }
+      
+      function draw (){
+        
+        ctx.clearRect(0, 0, canvas.height, canvas.width); 
+        
+        // Draw the blast (stroked, not filled)
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, blast.y, blast.r, 0, 2 * Math.PI);
+        ctx.fillStyle = "yellow";
+        ctx.fill();    
+       
+        ctx.strokeStyle= "red";         
+        ctx.strokeRect(player.x,player.y,player.width, player.height);
+        ctx.lineWidth = "3";
+                   
+              
+      }
+    
+      
+      function moveBlast(){
+        
+        
+        blast.y += blast.vy;
+        blast.x += blast.vx;
+        
+        //collisions between blast and player
+        if ( player.x < blast.x + blast.r && player.y < blast.y + blast.r && blast.x < player.x + player.width-45 && blast.y < player.y + player .height)
+        {
+          blast.vy = - blast.vy; 
+        }
+        
+        if (player.x >= 790 - player.width)
+        {
+          delete KeyboardEvent(evt);
+        }
+        
+        if (player.x <= 3)
+        {
+          delete KeyboardEvent(evt);        
+        }
+        
+      } 
+      function doKeyDown(evt){
+        switch (evt.keyCode) {
+             
+          case 37: 
+            player.x = player.x - player.vx;
+          break; 
+          case 39:     
+            player.x = player.x + player.vx;
+          break;
+          }
+      
+        }
+      
+      
+      init();
+      window.addEventListener('keydown',doKeyDown,true);  
     </script>
+    <p style= "text-align:center">Developed by Andy Blankley</p>
   </body>
 </html>
