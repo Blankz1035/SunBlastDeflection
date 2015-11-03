@@ -1,105 +1,196 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <h1 style = " text-align: center"><u>Sun Blast Deflector</u></h1> 
+<head>
+  <h1 style = " text-align: center"><u>Sun Blast Deflector</u></h1> 
+
+  <style type="text/css"></style>
+  <link rel="stylesheet" type="text/css"        href="sunblastdeflector.css">
+</head>
+</br>
+<body>
+
+  <form id="myForm">
+      <fieldset style = "width:400px">        
+        <legend>Personal Information & Game Score</legend>
+        <br/>
+        <p>First Name: <input id="firstName" name="firstname" type="text" size="25" /> &nbsp; &nbsp;
+          <br/>
+          Last Name: &nbsp;<input id="lastName" name="lastname" type="text" size="25" /> &nbsp; &nbsp;
+        <br/>
+        <br/>
+        Score: <input id="score" name="email" type="text" size="25" /> &nbsp; &nbsp;
+          <br/>
+          <br/>
+          Highest Score: <input id="highScore" name="email" type="text" size="25" /> &nbsp; &nbsp;
+          <br/>
+          <br/>
+          <input id="resetForm" type="button" onclick="resetInput()" value="Reset" />
+        </p>
+      </fieldset>
+  </form>
+
+
+  <div id = "canvas-container">  
+  <canvas id="gamecanvas" width = "793" height = "490"></canvas></div>
+
+  <script type="text/javascript">
+      var canvas = document.getElementById("gamecanvas");
+    // Get a 2D context for the canvas.
+      var ctx = canvas.getContext("2d");
+
+    var playerScore=0;
+    var sunScore=0;
     
-    <style type="text/css"></style>
-    <link rel="stylesheet" type="text/css"        href="sunblastdeflector.css">
-  </head>
-  </br>
-  <body>
-    <div id = "canvas-container">
-    <canvas id="gamecanvas" width = "793" height = "490"></canvas></div>
+    //how fast the blasts will spawn in MS
+    var spawnRate = 3000
     
-    <script type="text/javascript">
-        var canvas = document.getElementById("gamecanvas");
-      // Get a 2D context for the canvas.
-        var ctx = canvas.getContext("2d");
-        
-      var blast = 
+    // when was the last blast spawned
+    var lastSpawn = -1;
+
+    // this array holds all spawned object
+    var objects = [];
+
+    // save the starting time (used to calc elapsed time)
+    var startTime = Date.now();
+
+
+
+    var player =
         {
-            x: 80,
-            y: 10,
-            r: 10,
-            vx: 2,
-            vy: 3,
-        }
-      
-      var player =
-          {
-            x: 330,
-            y: canvas.width/2+30, 
-            width: 100,
-            height: 10,
-            vx: 10,         
-          }     
-      
-      
-      function init(){
-        draw();
-        moveBlast();
-        
-        window.requestAnimationFrame(init);
+          x: 330,
+          y: 435, 
+          width: 100,
+          height: 10,
+          vx: 5,         
+        }     
+
+     // this array holds all spawned bals
+
+    drawBlasts();
+
+    function spawnRandomBlast() {
+
+      var blast = 
+      {
+
+          x: 50 + Math.random() * (canvas.width - 200),
+          y: 10, 
+          r: 10,
+          vx: 2,
+          vy: 1,
+
+
       }
+        objects.push(blast);
+    }
+
+    function init(){
+      drawPlayer();
+      movePlayer();
+
+
+
+      window.requestAnimationFrame(init);
+    } // end function
+
+    function drawBlasts() {
+      // get the elapsed time
+  var time = Date.now();
+      var rate = 100;
       
-      function draw (){
-        
-        ctx.clearRect(0, 0, canvas.height, canvas.width); 
-        
-        // Draw the blast (stroked, not filled)
-        ctx.beginPath();
-        ctx.arc(canvas.width/2, blast.y, blast.r, 0, 2 * Math.PI);
-        ctx.fillStyle = "yellow";
-        ctx.fill();    
-       
-        ctx.strokeStyle= "red";         
-        ctx.strokeRect(player.x,player.y,player.width, player.height);
-        ctx.lineWidth = "3";
-                   
-              
+  // see if its time to spawn a new object
+  if (time > (lastSpawn + spawnRate)) {
+      lastSpawn = time;
+      spawnRandomBlast();
+      spawnRate = spawnRate - rate;
+
+  }
+      if (spawnRate <= 1000){
+        rate = 0;
+        spawnRate=1000;
       }
-    
-      
-      function moveBlast(){
-        
-        
-        blast.y += blast.vy;
-        blast.x += blast.vx;
-        
-        //collisions between blast and player
-        if ( player.x < blast.x + blast.r && player.y < blast.y + blast.r && blast.x < player.x + player.width-45 && blast.y < player.y + player .height)
+
+       // request another animation frame
+      requestAnimationFrame(drawBlasts);
+
+      // Draw the blast
+      for (var i = 0; i < objects.length; i++) {
+      var blast = objects[i];
+      blast.y += blast.vy;
+      ctx.beginPath();
+      ctx.arc(blast.x, blast.y, blast.r, 0, 2 * Math.PI);
+      ctx.closePath();
+      ctx.fillStyle = "yellow";
+      ctx.fill();
+
+
+        //collisions between blast and player       
+        if (player.x< (objects[i].x + blast.r) && (player.x + player.width) > objects[i].x && player.y< (objects[i].y + blast.r) && (player.y + player.height) > objects[i].y)
         {
           blast.vy = - blast.vy; 
         }
-        
-        if (player.x >= 790 - player.width)
-        {
-          delete KeyboardEvent(evt);
+
+        //score incrementing
+        if ( objects[i].y <=0)
+        { 
+          this.playerScore++;
         }
-        
-        if (player.x <= 3)
-        {
-          delete KeyboardEvent(evt);        
-        }
-        
-      } 
-      function doKeyDown(evt){
-        switch (evt.keyCode) {
-             
-          case 37: 
-            player.x = player.x - player.vx;
-          break; 
-          case 39:     
-            player.x = player.x + player.vx;
-          break;
-          }
-      
-        }
-      
-      
-      init();
-      window.addEventListener('keydown',doKeyDown,true);  
-    </script>
-    <p style= "text-align:center">Developed by Andy Blankley</p>
-  </body>
+
+      }// end for loop
+
+
+    } // end function
+    function drawPlayer (){
+
+      ctx.clearRect(0,0,793,490); 
+
+      //player paddle
+      ctx.strokeStyle= "red";         
+      ctx.strokeRect(player.x,player.y,player.width, player.height);
+      ctx.lineWidth = "3";
+
+    } // end function
+
+
+    function movePlayer(){
+
+      //move player paddle..
+      player.x += player.vx;
+
+      if ( player.x >= canvas.width - player.width )
+      {
+        player.vx = - player.vx; 
+      }
+
+      if(player.x <=3)
+      {  
+          player.vx = -player.vx;
+      }
+
+    } // end function
+
+    function doKeyDown(evt){
+switch (evt.keyCode) {
+
+  case 32:  /* spacebar was pressed */
+
+    if (player.x > 3)
+      player.vx = - player.vx;      
+    break;
+
+}
+} // end function
+
+
+    function resetInput() {
+ document.getElementById("myForm").reset();
+}// end function 
+
+    init();
+    drawBlasts();
+  window.addEventListener('keydown',doKeyDown,true);   
+  </script>
+  <br/>
+</body>
+<footer>Developed by Andy Blankley</footer>
 </html>

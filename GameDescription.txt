@@ -6,8 +6,7 @@ Html5, Javascript, CSS Graphics Programming Project
 
 Simple Game:
 
-** Move the Deflecter left or right with arrow keys
-
+** Move the Deflecter with space bar to reverse your direction!
 ** Defend against Sun Blasts from the almighty star
 ** to keep planets health good!
 
