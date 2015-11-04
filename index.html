@@ -24,7 +24,7 @@
           Sun Score: <input id="sunScore1" name="sunScore1" type="text" size="25" readonly ="true" value = 0 /> &nbsp; &nbsp;
           <br/>
           <br/>
-          <input id="resetForm" type="button" onclick="resetInput()" value="Reset" />
+          
         </p>
       </fieldset>
   </form> 
@@ -37,7 +37,6 @@
       var canvas = document.getElementById("gamecanvas");
     // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
-      ctx.save();
     
     //how fast the blasts will spawn in MS
     var spawnRate = 4000;
@@ -51,8 +50,6 @@
     // save the starting time (used to calc elapsed time)
     var startTime = Date.now();
 
-
-
     var player =
         {
           x: 330,
@@ -62,10 +59,23 @@
           vx: 5,         
         }     
 
+    var playerScore;
+    var sunScore;
+    
+    //FUNCTIONS--------------------------
      // this array holds all spawned bals
 
     drawBlasts();
-
+    
+    function reset () {
+      spawnRate = 4000;
+      sunScore =0;
+      playerScore = 0;
+      documen.getElementById("sunScore1").value = 0;
+      document.getElementById("playerScore1").value = 0;
+      
+    }
+    
     function spawnRandomBlast() {
 
       var blast = 
@@ -83,18 +93,19 @@
     } // end function
 
     function init(){
+      
+      sunScore = 0;
+      playerScore = 0;
+      
       drawPlayer();
       movePlayer();
-
-
-
+      
       window.requestAnimationFrame(init);
     } // end function
 
     function drawBlasts() {
       //score variables
-      var playerScore=0;
-      var sunScore=0;
+      
       
       // get the elapsed time
   var time = Date.now();
@@ -146,7 +157,11 @@
         
       }// end for loop
       
-      
+      if ( sunScore <= 5)
+      {
+        reset(); 
+      }
+  
 
     } // end function
     function drawPlayer (){
@@ -192,17 +207,16 @@ switch (evt.keyCode) {
 
 
     function resetInput() {
- document.getElementById("myForm").reset();
-    drawBlasts.playerScore = 0;
-      document.getElementById("playerScore1").value = playerScore;
-      
+ document.getElementById("myForm").reset();  
 }// end function 
-    
+  
     init();
     drawBlasts();
-  window.addEventListener('keydown',doKeyDown,true);   
+  window.addEventListener('keydown',doKeyDown,true);   document.getElementById("resetGame").addEventListener("click", reset);
   </script>
   <br/>
+  <button id = "resetGame"type ="button" onclick="reset()">Reset game</button>
+  
 </body>
 <footer>Developed by Andy Blankley</footer>
 </html>
