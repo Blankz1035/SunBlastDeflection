@@ -18,16 +18,16 @@
           Last Name: &nbsp;<input id="lastName" name="lastname" type="text" size="25" /> &nbsp; &nbsp;
         <br/>
         <br/>
-        Score: <input id="score" name="email" type="text" size="25" /> &nbsp; &nbsp;
+        Defenders Score: <input id="playerScore1" name="playerScore1" type="text" size="25" readonly="true" value = 0 /> &nbsp; &nbsp;
           <br/>
           <br/>
-          Highest Score: <input id="highScore" name="email" type="text" size="25" /> &nbsp; &nbsp;
+          Sun Score: <input id="sunScore1" name="sunScore1" type="text" size="25" readonly ="true" value = 0 /> &nbsp; &nbsp;
           <br/>
           <br/>
           <input id="resetForm" type="button" onclick="resetInput()" value="Reset" />
         </p>
       </fieldset>
-  </form>
+  </form> 
 
 
   <div id = "canvas-container">  
@@ -37,12 +37,10 @@
       var canvas = document.getElementById("gamecanvas");
     // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
-
-    var playerScore=0;
-    var sunScore=0;
+      ctx.save();
     
     //how fast the blasts will spawn in MS
-    var spawnRate = 3000
+    var spawnRate = 4000;
     
     // when was the last blast spawned
     var lastSpawn = -1;
@@ -82,7 +80,7 @@
 
       }
         objects.push(blast);
-    }
+    } // end function
 
     function init(){
       drawPlayer();
@@ -94,6 +92,10 @@
     } // end function
 
     function drawBlasts() {
+      //score variables
+      var playerScore=0;
+      var sunScore=0;
+      
       // get the elapsed time
   var time = Date.now();
       var rate = 100;
@@ -131,13 +133,20 @@
         }
 
         //score incrementing
-        if ( objects[i].y <=0)
+        if ( objects[i].y <=1  )
         { 
-          this.playerScore++;
+          playerScore ++;
+          document.getElementById("playerScore1").value = playerScore;  
         }
-
+        
+        if (objects[i].y >= 490)
+        {
+         sunScore ++; document.getElementById("sunScore1").value = sunScore;
+        }
+        
       }// end for loop
-
+      
+      
 
     } // end function
     function drawPlayer (){
@@ -184,8 +193,11 @@ switch (evt.keyCode) {
 
     function resetInput() {
  document.getElementById("myForm").reset();
+    drawBlasts.playerScore = 0;
+      document.getElementById("playerScore1").value = playerScore;
+      
 }// end function 
-
+    
     init();
     drawBlasts();
   window.addEventListener('keydown',doKeyDown,true);   
