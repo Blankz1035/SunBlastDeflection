@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
-  <h1 style = " text-align: center"><u>Sun Blast Deflector</u></h1> 
+  <h1 style = "text-align: center"><u>Sun Blast Deflection</u></h1> 
 
   <style type="text/css"></style>
-  <link rel="stylesheet" type="text/css"        href="sunblastdeflector.css">
+  <link rel="stylesheet" type="text/css" href="sunblastdeflector.css">
 </head>
 </br>
 <body>
@@ -15,8 +15,6 @@
         <br/>
         <p>First Name: <input id="firstName" name="firstname" type="text" size="25" /> &nbsp; &nbsp;
           <br/>
-          Last Name: &nbsp;<input id="lastName" name="lastname" type="text" size="25" /> &nbsp; &nbsp;
-        <br/>
         <br/>
         Defenders Score: <input id="playerScore1" name="playerScore1" type="text" size="25" readonly="true" value = 0 /> &nbsp; &nbsp;
           <br/>
@@ -24,11 +22,12 @@
           Sun Score: <input id="sunScore1" name="sunScore1" type="text" size="25" readonly ="true" value = 0 /> &nbsp; &nbsp;
           <br/>
           <br/>
-          
+          <br/>
+          Tips & Instructions: <br/>To play press Start Game.
+          <br/>Tap the spacebar to reverse direction of the player and stop those harmful sun blasts destroying the earth!<br/>Press restart to begin again!<br/>Don't let the Suns Score reach <b>20</b> or RESET! 
         </p>
       </fieldset>
   </form> 
-
 
   <div id = "canvas-container">  
   <canvas id="gamecanvas" width = "793" height = "490"></canvas></div>
@@ -37,6 +36,10 @@
       var canvas = document.getElementById("gamecanvas");
     // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
+    
+    
+    // VARIABLES --------------------------------------------------------
+    
     
     //how fast the blasts will spawn in MS
     var spawnRate = 4000;
@@ -61,39 +64,25 @@
 
     var playerScore;
     var sunScore;
+    var end=false;
     
-    //FUNCTIONS--------------------------
-     // this array holds all spawned bals
-
-    drawBlasts();
+    //FUNCTIONS----------------------------------------------------------
     
-    function reset () {
-      spawnRate = 4000;
-      sunScore =0;
-      playerScore = 0;
-      documen.getElementById("sunScore1").value = 0;
-      document.getElementById("playerScore1").value = 0;
-      
-    }
     
-    function spawnRandomBlast() {
-
-      var blast = 
-      {
-
-          x: 50 + Math.random() * (canvas.width - 200),
-          y: 10, 
-          r: 10,
-          vx: 2,
-          vy: 1,
-
-
+    // to start the game initially
+    var i=0;
+    function main(){
+      end=false;
+        if(i==0){
+            reset ();
+      init();
+      drawBlasts();
+            i++;
       }
-        objects.push(blast);
-    } // end function
-
+    } // end main function
+    
     function init(){
-      
+      //initializing variables
       sunScore = 0;
       playerScore = 0;
       
@@ -101,40 +90,53 @@
       movePlayer();
       
       window.requestAnimationFrame(init);
-    } // end function
+    } // end init function
 
+    function spawnRandomBlast() {
+      //creating blast as object
+      var blast = 
+      {
+          //generating a random spawn point along
+          //x axis for a spawn
+          x: 50 + Math.random() * (canvas.width - 200),
+          y: 10, 
+          r: 10,
+          vy: 2,
+      }
+        //pushing values of a blast to an array
+        objects.push(blast);
+    } // end SpawnRandomBlasts function
+    
     function drawBlasts() {
-      //score variables
-      
-      
+
       // get the elapsed time
-  var time = Date.now();
+      var time = Date.now();
       var rate = 100;
-      
-  // see if its time to spawn a new object
-  if (time > (lastSpawn + spawnRate)) {
+
+      // see if its time to spawn a new object
+      if (time > (lastSpawn + spawnRate)) {
       lastSpawn = time;
       spawnRandomBlast();
       spawnRate = spawnRate - rate;
 
   }
+      //dont want spawn rate below 1 second as too much! SO setting at a figure if it reaches
       if (spawnRate <= 1000){
         rate = 0;
         spawnRate=1000;
       }
 
-       // request another animation frame
-      requestAnimationFrame(drawBlasts);
+
 
       // Draw the blast
       for (var i = 0; i < objects.length; i++) {
-      var blast = objects[i];
-      blast.y += blast.vy;
-      ctx.beginPath();
-      ctx.arc(blast.x, blast.y, blast.r, 0, 2 * Math.PI);
-      ctx.closePath();
-      ctx.fillStyle = "yellow";
-      ctx.fill();
+        var blast = objects[i];
+        blast.y += blast.vy;
+        ctx.beginPath();
+        ctx.arc(blast.x, blast.y, blast.r, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fillStyle = "yellow";
+        ctx.fill();
 
 
         //collisions between blast and player       
@@ -143,29 +145,39 @@
           blast.vy = - blast.vy; 
         }
 
-        //score incrementing
+        //score incrementing for player and sun
         if ( objects[i].y <=1  )
         { 
           playerScore ++;
           document.getElementById("playerScore1").value = playerScore;  
         }
-        
+
         if (objects[i].y >= 490)
         {
-         sunScore ++; document.getElementById("sunScore1").value = sunScore;
-        }
-        
-      }// end for loop
-      
-      if ( sunScore <= 5)
-      {
-        reset(); 
-      }
-  
+          sunScore++; 
+          document.getElementById("sunScore1").value = sunScore;
 
-    } // end function
+          // makes an end point if sun score hits 20
+          if(sunScore==20){
+            //Shows screen pop up with players name(IF ENTERED!), defenders score and small message to make people play again
+            alert("Game Over!\nPlayer Name: " + document.getElementById("firstName").value + "\nDefenders Score : " + document.getElementById("playerScore1").value + "\nPlay Again to try beat score!");
+            reset();
+            //refreshes page and restarts game!
+            document.location.href = "";
+          }// end inner if
+        } // end outer if
+
+      }// end FOR loop
+
+       // request another animation frame
+      requestAnimationFrame(drawBlasts);
+
+
+    } // end drawBlasts function
+
+    //drawing player rectangle
     function drawPlayer (){
-
+      //clear canvas for drawing
       ctx.clearRect(0,0,793,490); 
 
       //player paddle
@@ -173,9 +185,9 @@
       ctx.strokeRect(player.x,player.y,player.width, player.height);
       ctx.lineWidth = "3";
 
-    } // end function
+    } // end drawPlayer function
 
-
+    // movement of player and also collision detection
     function movePlayer(){
 
       //move player paddle..
@@ -191,8 +203,9 @@
           player.vx = -player.vx;
       }
 
-    } // end function
+    } // end movePlayer function
 
+    //key to reverse direction of player
     function doKeyDown(evt){
 switch (evt.keyCode) {
 
@@ -203,20 +216,30 @@ switch (evt.keyCode) {
     break;
 
 }
-} // end function
-
-
-    function resetInput() {
- document.getElementById("myForm").reset();  
-}// end function 
-  
-    init();
-    drawBlasts();
-  window.addEventListener('keydown',doKeyDown,true);   document.getElementById("resetGame").addEventListener("click", reset);
+} // end keydown function  
+    
+    // this function resets Scoring and also the spawn rate to original values, making the game begin from start!
+     function reset() {
+      spawnRate = 4000; // in milliseconds
+      sunScore =0;
+      playerScore = 0;
+      document.getElementById("sunScore1").value = 0; //form value for suns score to 0
+     if(end==true){i=0;return;} document.getElementById("playerScore1").value = 0; // form value for defenders score to 0
+      objects = [];  //resets array to empty to begin from scratch!
+      
+    } //end reset function
+    
+  window.addEventListener('keydown',doKeyDown,true);   document.getElementById("resetGame");
+     
+    // Thank you for reading my Code for SunBlastDeflection 
+    // Hope it is ok for everyone!
+    // Happy coding for animations!
+    // #LiveToCode ! 
+    // Developed by Andy Blankley
   </script>
   <br/>
+  <button id = "resetGame"type ="button" onclick="main()">Start game</button>
   <button id = "resetGame"type ="button" onclick="reset()">Reset game</button>
-  
 </body>
 <footer>Developed by Andy Blankley</footer>
 </html>
