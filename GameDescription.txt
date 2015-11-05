@@ -6,10 +6,13 @@ Html5, Javascript, CSS Graphics Programming Project
 
 Simple Game:
 
+** Start the game by pressing "Start Game" Button.
+** Reset in game progress with "Reset Game" Button.
+
+** Enter Player First Name to be included in your gameOver popup!
 ** Move the Deflecter with space bar to reverse your direction!
 ** Defend against Sun Blasts from the almighty star
 ** to keep planets health good!
 
-** Master the deflector as it decreases in size 
-** and blasts get more frequent.
-
+** Dont let the Suns blasts Score get to 20 or game over! 
+** Blasts will get more frequent!
